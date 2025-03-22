@@ -16,27 +16,22 @@
             </div>
           </q-card-section>
           <q-card-section>
-            <q-form
-              class="q-gutter-md"
-            >
+            <q-form class="q-gutter-md" @submit.prevent="login">
               <q-input
                 filled
                 v-model="username"
                 label="Username"
                 lazy-rules
               />
-
               <q-input
                 type="password"
                 filled
                 v-model="password"
                 label="Password"
                 lazy-rules
-
               />
-
               <div>
-                <q-btn label="Login" to="/" type="button" color="primary"/>
+                <q-btn label="Login" type="submit" color="primary"/>
               </div>
             </q-form>
           </q-card-section>
@@ -47,21 +42,35 @@
 </template>
 
 <script>
-import {defineComponent} from 'vue'
-import {ref} from 'vue'
+import { defineComponent, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   setup() {
+    const username = ref('')
+    const password = ref('')
+    const correctPassword = '12345qwer'
+    const router = useRouter()
+
+    const login = () => {
+      if (password.value === correctPassword) {
+        alert('Login successful!')
+        router.push('/dashboard2') // Redirect to Dashboard2
+      } else {
+        alert('Incorrect password!')
+      }
+    }
+
     return {
-      username: ref('Pratik'),
-      password: ref('12345')
+      username,
+      password,
+      login
     }
   },
 })
 </script>
 
 <style>
-
 .bg-image {
   background-image: linear-gradient(135deg, #7028e4 0%, #e5b2ca 100%);
 }
