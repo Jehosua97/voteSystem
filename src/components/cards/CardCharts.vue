@@ -14,6 +14,17 @@
         </q-card-section>
       </q-card>
     </div>
+    <div>
+    <input type="text" id="message1" placeholder="Enter message for Citizen 1" />
+    <button @click="sendMessage(1)">Send to Citizen 1</button>
+    
+    <input type="text" id="message2" placeholder="Enter message for Citizen 2" />
+    <button @click="sendMessage(2)">Send to Citizen 2</button>
+    
+    <div id="messageLog"></div>
+    <div id="votes1"></div>
+    <div id="votes2"></div>
+  </div>
     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
       <q-card class="q-ma-xs no-shadow" bordered style="background-color: #ea4b64">
         <q-card-section class="text-h6 text-white">
@@ -55,6 +66,13 @@ export default defineComponent({
   name: 'CardCharts',
   components:{
     ECharts
+  },
+  data() {
+    return {
+      citizen1Url: 'http://10.173.8.113:5001',
+      citizen2Url: 'http://10.173.8.113:5002',
+      frontendUrl: 'http://10.173.8.113:9000'
+    };
   },
   setup () {
     return {
@@ -244,6 +262,77 @@ export default defineComponent({
         },
         "color": ["#45c2c5"]
     },
+    }
+  },
+  methods: {
+    // URLs de los servicios (ajusta según tu configuración)
+    
+
+    // Función para enviar mensajes
+    async sendMessage(citizenId) {
+      const messageInput = document.getElementById(`message${citizenId}`);
+      const message = messageInput.value;
+
+      if (!message) return;
+
+      try {
+        const response = await fetch(`${citizenId === 1 ? this.citizen1Url : this.citizen2Url}/send/${message}`);
+        const data = await response.json();
+
+        this.logMessage(citizenId, message, 'sent');
+        messageInput.value = '';
+
+        // Actualizar las vistas de la base de datos
+        this.updateVotesView();
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
+    },
+
+    // Función para registrar mensajes en el log
+    logMessage(citizenId, message, direction) {
+      const messageLog = document.getElementById('messageLog');
+      const messageElement = document.createElement('div');
+      messageElement.className = `message citizen${citizenId}`;
+
+      const directionText = direction === 'sent' ? 'sent to' : 'received from';
+      messageElement.textContent = `Citizen ${citizenId} ${directionText} Citizen ${citizenId === 1 ? 2 : 1}: ${message}`;
+
+      messageLog.appendChild(messageElement);
+      messageLog.scrollTop = messageLog.scrollHeight;
+    },
+
+    // Función para actualizar la vista de votos
+    async updateVotesView() {
+      try {
+        // Obtener votos de Citizen 1
+        const response1 = await fetch(`${this.citizen1Url}/votes`);
+        const votes1 = await response1.json();
+        this.displayVotes('votes1', votes1);
+
+        // Obtener votos de Citizen 2
+        const response2 = await fetch(`${this.citizen2Url}/votes`);
+        const votes2 = await response2.json();
+        this.displayVotes('votes2', votes2);
+      } catch (error) {
+        console.error('Error updating votes:', error);
+      }
+    },
+
+    // Función para mostrar votos en el contenedor especificado
+    displayVotes(containerId, votes) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      votes.forEach(vote => {
+        const voteElement = document.createElement('div');
+        voteElement.className = 'vote-entry';
+
+        const [id, citizenId, message, timestamp] = vote;
+        voteElement.textContent = `ID: ${id} | Vote: ${message} | Time: ${timestamp}`;
+
+        container.appendChild(voteElement);
+      });
     }
   },
 })
