@@ -266,9 +266,7 @@ export default defineComponent({
   },
   methods: {
     // URLs de los servicios (ajusta según tu configuración)
-    
-
-    // Función para enviar mensajes
+        // Función para enviar mensajes
     async sendMessage(citizenId) {
       const messageInput = document.getElementById(`message${citizenId}`);
       const message = messageInput.value;

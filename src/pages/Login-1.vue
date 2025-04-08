@@ -44,29 +44,52 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 export default defineComponent({
   setup() {
     const username = ref('')
     const password = ref('')
-    const correctPassword = '12345qwer'
     const router = useRouter()
-
     const login = () => {
-      if (password.value === correctPassword) {
-        alert('Login successful!')
-        router.push('/dashboard2') // Redirect to Dashboard2
-      } else {
-        alert('Incorrect password!')
-      }
+      axios.post('http://localhost:3000/login', {
+        username: username.value,
+        password: password.value
+      })
+      .then(response => {
+        if (response.data.success) {
+          //alert('Login successful!')
+          router.push('/dashboard2') // Redirect to Dashboard2
+        } else {
+          alert('Incorrect username or password!')
+        }
+      })
+      .catch(error => {
+        console.error('Error during login:', error);
+      });
     }
-
     return {
       username,
       password,
       login
     }
   },
+  data() {
+    return {
+      user: []
+    };
+  },
+  mounted() {
+    fetch('http://localhost:3000/user')
+      .then(response => response.json())
+      .then(data => {
+        this.user = data;
+        console.log(this.user);
+      })
+      .catch(error => {
+        console.error('Error fetching user:', error);
+      });
+  }
 })
 </script>
 
