@@ -51,13 +51,14 @@
   </q-card>
 
   <!-- Dialog component -->
-  <q-dialog v-model="dialogVisible">
+  <q-dialog v-model="dialogVisible" class="dialog-wide">
     <q-card>
       <q-card-section>
-        <div class="text-h6">Message</div>
+        <div class="text-h6">Votes</div>
       </q-card-section>
       <q-card-section>
-        <p>Button clicked!</p>
+        <pre id="votes1" class="json-viewer"></pre>
+        <pre id="votes2" class="json-viewer"></pre>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn flat label="Close" @click="dialogVisible = false" />
@@ -118,6 +119,35 @@ export default defineComponent({
 
     const showMessage = () => {
       dialogVisible.value = true
+      updateVotesView()
+    }
+
+    const updateVotesView = async () => {
+      try {
+        // Obtener votos de Citizen 1
+        const response1 = await fetch(`http://10.173.8.113:5001/votes`);
+        const votes1 = await response1.json();
+        displayVotes('votes1', votes1);
+
+        // Obtener votos de Citizen 2
+        const response2 = await fetch(`${citizen2Url}/votes`);
+        const votes2 = await response2.json();
+        displayVotes('votes2', votes2);
+      } catch (error) {
+        console.error('Error updating votes:', error);
+      }
+    }
+
+    const displayVotes = (containerId, votes) => {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      const votesJson = JSON.stringify(votes, null, 2);
+      const preElement = document.createElement('pre');
+      preElement.textContent = votesJson;
+      preElement.className = 'json-viewer';
+
+      container.appendChild(preElement);
     }
 
     return {
@@ -131,7 +161,10 @@ export default defineComponent({
       paginatedUsers,
       maxPage,
       dialogVisible,
-      showMessage
+      showMessage,
+      citizen1Url: 'http://10.173.8.113:5001',
+      citizen2Url: 'http://10.173.8.113:5002',
+      frontendUrl: 'http://10.173.8.113:9000'
     }
   },
   mounted() {
@@ -141,4 +174,16 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.dialog-wide {
+  width: 70vw; /* 70% of the viewport width */
+  height: 70vh; /* 70% of the viewport height */
+}
+
+.json-viewer {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 5px;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
 </style>
