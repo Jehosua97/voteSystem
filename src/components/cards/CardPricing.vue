@@ -12,7 +12,7 @@
     </q-card-section>
     <q-card-section class="q-pa-none">
       <div class="text-h2 text-weight-bolder text-center">
-        {{ price }}
+        {{ voteCount }}
       </div>
     </q-card-section>
     <q-card-section>
@@ -21,7 +21,7 @@
       </div>
     </q-card-section>
     <q-card-actions vertical align="center">
-      <q-btn outline class="text-capitalize">Buy Now</q-btn>
+      <q-btn outline class="text-capitalize">Vote for this candidate</q-btn>
     </q-card-actions>
   </q-card>
 </template>
