@@ -2,19 +2,22 @@
   <q-card class="no-shadow" bordered>
     <q-card-section>
       <div class="text-h6 text-grey-8">
-        Inline Actions
+        Citizen List
         <q-btn label="Export" class="float-right text-capitalize text-indigo-8 shadow-3" icon="person"/>
       </div>
     </q-card-section>
     <q-separator></q-separator>
+    <q-card-section>
+      <q-input v-model="search" placeholder="Search..." class="q-mb-md" />
+    </q-card-section>
     <q-card-section class="q-pa-none">
-      <q-table :rows="data" :columns="columns" hide-bottom class="no-shadow">
+      <q-table :rows="paginatedUsers" :columns="columns" hide-bottom class="no-shadow">
         <template v-slot:body-cell-Name="props">
           <q-td :props="props">
             <q-item style="max-width: 420px">
               <q-item-section avatar>
                 <q-avatar>
-                  <img :src="props.row.avatar">
+                  <img src="profile.svg">
                 </q-avatar>
               </q-item-section>
 
@@ -24,83 +27,118 @@
             </q-item>
           </q-td>
         </template>
+        <template v-slot:body-cell-Voted="props">
+          <q-td :props="props">
+            <q-item-section>
+              <q-item-label>{{ props.row.voted === 1 ? 'Yes' : 'No' }}</q-item-label>
+            </q-item-section>
+          </q-td>
+        </template>
         <template v-slot:body-cell-Action="props">
           <q-td :props="props">
-            <q-btn icon="edit" size="sm" flat dense/>
-            <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense/>
+            <q-btn icon="database" size="sm" flat dense @click="showMessage"/>
           </q-td>
         </template>
       </q-table>
+      <q-pagination
+        v-model="page"
+        :max="maxPage"
+        max-pages="7"
+        boundary-numbers
+        class="q-mt-md"
+      />
     </q-card-section>
   </q-card>
+
+  <!-- Dialog component -->
+  <q-dialog v-model="dialogVisible">
+    <q-card>
+      <q-card-section>
+        <div class="text-h6">Message</div>
+      </q-card-section>
+      <q-card-section>
+        <p>Button clicked!</p>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn flat label="Close" @click="dialogVisible = false" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
-import {defineComponent} from 'vue'
-
-
-const data = [
-  {
-    name: 'Pratik Patel',
-    Crated_Date: '15/3/2020',
-    Project: 'Quasar Admin',
-    avatar: 'https://avatars3.githubusercontent.com/u/34883558?s=400&u=09455019882ac53dc69b23df570629fd84d37dd1&v=4',
-    progress: 80,
-    des: 'Solutions Developer'
-  },
-  {
-    name: 'Mayank Patel',
-    Crated_Date: '10/2/2018',
-    Project: 'Quasar QDraggableTree',
-    avatar: 'https://avatars2.githubusercontent.com/u/27857088?s=400&u=a898efbc753d93cf4c2070a7cf3b05544b50deea&v=4',
-    progress: 50,
-    des: 'Solutions Developer'
-  },
-  {
-    name: 'Mayur Patel',
-    Crated_Date: '10/2/2018',
-    Project: 'Quasar Shopping',
-    avatar: 'https://avatars0.githubusercontent.com/u/55240045?s=400&u=cf9bffc2bd2d8e42ca6e5abf40ddd6c1a03ce2860&v=4',
-    progress: 100,
-    des: 'Solutions Developer'
-  },
-  {
-    name: 'Jeff Galbraith',
-    Crated_Date: '10/2/2019',
-    Project: 'Quasar QMarkdown',
-    avatar: 'https://avatars1.githubusercontent.com/u/10262924?s=400&u=9f601b344d597ed76581e3a6a10f3c149cb5f6dc&v=4',
-    progress: 60,
-    des: 'Solutions Developer'
-  },
-  {
-    name: 'Pratik Patel',
-    Crated_Date: '10/1/2020',
-    Project: 'Quasar QGrid',
-    avatar: 'https://avatars3.githubusercontent.com/u/34883558?s=400&u=09455019882ac53dc69b23df570629fd84d37dd1&v=4',
-    progress: 30,
-    des: 'Solutions Developer'
-  },
-];
+import { defineComponent, ref, computed } from 'vue'
+import axios from 'axios'
 
 const columns = [
-  {name: 'Name', label: 'Name', field: 'name', sortable: true, align: 'left'},
-  {name: 'Crated Date', label: 'Crated Date', field: 'Crated_Date', sortable: true, align: 'left'},
-  {name: 'Project', label: 'Project', field: 'Project', sortable: true, align: 'left'},
-  {name: 'Action', label: '', field: 'Action', sortable: false, align: 'center'}
+  { name: 'Name', label: 'Name', field: 'name', sortable: true, align: 'left' },
+  { name: 'voting_id', label: 'Voter ID', field: 'voting_id', sortable: true, align: 'left' },
+  { name: 'phone_number', label: 'Phone Number', field: 'phone_number', sortable: true, align: 'left' },
+  { name: 'Voted', label: 'Already Voted?', field: 'voted', sortable: true, align: 'left' },
+  { name: 'Action', label: '', field: 'Action', sortable: false, align: 'center' }
 ];
-
 
 export default defineComponent({
   name: "TableActions",
   setup() {
-    return {
-      data,
-      columns,
+    const users = ref([])
+    const search = ref('')
+    const page = ref(1)
+    const rowsPerPage = ref(10) // Ensure this is set to 10
+    const dialogVisible = ref(false)
+
+    const fetchUsers = () => {
+      axios.get('http://localhost:3000/users')
+        .then(response => {
+          users.value = response.data
+          console.log(users.value)
+        })
+        .catch(error => {
+          console.error('Error fetching users:', error)
+        })
     }
+
+    const filteredUsers = computed(() => {
+      return users.value.filter(user => {
+        return user.name.toLowerCase().includes(search.value.toLowerCase()) ||
+               user.voting_id.toLowerCase().includes(search.value.toLowerCase()) ||
+               user.phone_number.includes(search.value)
+      })
+    })
+
+    const paginatedUsers = computed(() => {
+      const start = (page.value - 1) * rowsPerPage.value
+      const end = start + rowsPerPage.value
+      return filteredUsers.value.slice(start, end)
+    })
+
+    const maxPage = computed(() => {
+      return Math.ceil(filteredUsers.value.length / rowsPerPage.value)
+    })
+
+    const showMessage = () => {
+      dialogVisible.value = true
+    }
+
+    return {
+      columns,
+      users,
+      search,
+      page,
+      rowsPerPage,
+      fetchUsers,
+      filteredUsers,
+      paginatedUsers,
+      maxPage,
+      dialogVisible,
+      showMessage
+    }
+  },
+  mounted() {
+    this.fetchUsers()
   }
 })
 </script>
 
 <style scoped>
-
 </style>

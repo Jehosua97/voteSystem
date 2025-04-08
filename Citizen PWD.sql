@@ -1,3 +1,13 @@
+CREATE TABLE user (
+  serial_number INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255),
+  phone_number VARCHAR(15),
+  voting_id VARCHAR(20),
+  password VARCHAR(255),
+  voted TINYINT(1) DEFAULT 0,
+  PRIMARY KEY (serial_number)
+);
+
 INSERT INTO user (name, phone_number, voting_id, password) VALUES
 ('Alice Johnson', '1234567890', 'VOT12345', 'password1'),
 ('Bob Smith', '2345678901', 'VOT12346', 'password2'),
@@ -97,4 +107,5 @@ INSERT INTO user (name, phone_number, voting_id, password) VALUES
 ('Ruby Ward', '6789012354', 'VOT12440', 'password96'),
 ('Steven Jenkins', '7890123465', 'VOT12441', 'password97'),
 ('Tara Brooks', '8901234576', 'VOT12442', 'password98'),
-('Ulysses Powell', '9012345677', 'VOT12443', 'password99');
+('Ulysses Powell', '9012345677', 'VOT12443', 'password99'),
+('admin', '123456789', 'admin', 'admin');

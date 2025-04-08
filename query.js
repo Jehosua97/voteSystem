@@ -47,6 +47,18 @@ app.post('/login', (req, res) => {
   });
 });
 
+app.get('/users', (req, res) => {
+  const query = 'SELECT * FROM user';
+  connection.query(query, (error, results) => {
+    if (error) {
+      console.error('Error executing query: ' + error.stack);
+      res.status(500).send('Error executing query');
+      return;
+    }
+    res.json(results);
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
