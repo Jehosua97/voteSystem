@@ -49,22 +49,30 @@
       />
     </q-card-section>
   </q-card>
-
   <!-- Dialog component -->
   <q-dialog v-model="dialogVisible" class="dialog-wide">
-    <q-card>
+    <q-card style="width: 700px; max-width: 80vw;">
       <q-card-section>
-        <div class="text-h6">Votes</div>
+        <div class="text-h6">Database of Citizen: </div>
       </q-card-section>
       <q-card-section>
         <pre id="votes1" class="json-viewer"></pre>
-        <pre id="votes2" class="json-viewer"></pre>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn flat label="Close" @click="dialogVisible = false" />
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <div class="q-pa-md">
+    <q-infinite-scroll @load="onLoad" :offset="250">
+      {{ "Hello" }}
+      <template v-slot:loading>
+        <div class="row justify-center q-my-md">
+          <q-spinner-dots color="primary" size="40px" />
+        </div>
+      </template>
+    </q-infinite-scroll>
+  </div>
 </template>
 
 <script>
@@ -83,6 +91,7 @@ export default defineComponent({
   name: "TableActions",
   setup() {
     const users = ref([])
+    const items = ref([ {}, {}, {}, {}, {}, {}, {} ])
     const search = ref('')
     const page = ref(1)
     const rowsPerPage = ref(10) // Ensure this is set to 10
@@ -150,6 +159,8 @@ export default defineComponent({
       container.appendChild(preElement);
     }
 
+
+
     return {
       columns,
       users,
@@ -164,19 +175,26 @@ export default defineComponent({
       showMessage,
       citizen1Url: 'http://10.173.8.113:5001',
       citizen2Url: 'http://10.173.8.113:5002',
-      frontendUrl: 'http://10.173.8.113:9000'
+      frontendUrl: 'http://10.173.8.113:9000',
+      items,
+      onLoad (index, done) {
+        setTimeout(() => {
+          items.value.push({}, {}, {}, {}, {}, {}, {})
+          done()
+        }, 2000)
+      }
     }
   },
   mounted() {
-    this.fetchUsers()
+    this.fetchUsers();
   }
 })
 </script>
 
 <style scoped>
 .dialog-wide {
-  width: 70vw; /* 70% of the viewport width */
-  height: 70vh; /* 70% of the viewport height */
+  width: 90vw; /* Increased to 90% of the viewport width */
+  height: 70vh; /* Keep the height at 70% of the viewport height */
 }
 
 .json-viewer {

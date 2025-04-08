@@ -292,7 +292,6 @@ export default defineComponent({
       const messageLog = document.getElementById('messageLog');
       const messageElement = document.createElement('div');
       messageElement.className = `message citizen${citizenId}`;
-
       const directionText = direction === 'sent' ? 'sent to' : 'received from';
       messageElement.textContent = `Citizen ${citizenId} ${directionText} Citizen ${citizenId === 1 ? 2 : 1}: ${message}`;
 
