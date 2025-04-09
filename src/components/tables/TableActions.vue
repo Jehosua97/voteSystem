@@ -3,7 +3,7 @@
     <q-card-section>
       <div class="text-h6 text-grey-8">
         Citizen List
-        <q-btn label="Export" class="float-right text-capitalize text-indigo-8 shadow-3" icon="person"/>
+        <q-btn label="Export" class="float-right text-capitalize text-indigo-8 shadow-3" icon="person" />
       </div>
     </q-card-section>
     <q-separator></q-separator>
@@ -36,17 +36,11 @@
         </template>
         <template v-slot:body-cell-Action="props">
           <q-td :props="props">
-            <q-btn icon="database" size="sm" flat dense @click="showMessage"/>
+            <q-btn icon="database" size="sm" flat dense @click="showMessage" />
           </q-td>
         </template>
       </q-table>
-      <q-pagination
-        v-model="page"
-        :max="maxPage"
-        max-pages="7"
-        boundary-numbers
-        class="q-mt-md"
-      />
+      <q-pagination v-model="page" :max="maxPage" max-pages="7" boundary-numbers class="q-mt-md" />
     </q-card-section>
   </q-card>
   <!-- Dialog component -->
@@ -63,16 +57,12 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
-  <div class="q-pa-md">
-    <q-infinite-scroll @load="onLoad" :offset="250">
-      {{ "Hello" }}
-      <template v-slot:loading>
-        <div class="row justify-center q-my-md">
-          <q-spinner-dots color="primary" size="40px" />
-        </div>
-      </template>
-    </q-infinite-scroll>
+  <q-space class="q-my-md"></q-space> <!-- Adds vertical spacing -->
+  <div class="text-h6 text-grey-8">
+    <q-btn @click="showLogs" label="Vote Logs" class="float-center text-capitalize text-indigo-8 shadow-3"
+      icon="person" />
   </div>
+  <div id="voteLogsContainer" class="q-pa-md"></div>
 </template>
 
 <script>
@@ -91,10 +81,9 @@ export default defineComponent({
   name: "TableActions",
   setup() {
     const users = ref([])
-    const items = ref([ {}, {}, {}, {}, {}, {}, {} ])
     const search = ref('')
     const page = ref(1)
-    const rowsPerPage = ref(10) // Ensure this is set to 10
+    const rowsPerPage = ref(10)
     const dialogVisible = ref(false)
 
     const fetchUsers = () => {
@@ -111,8 +100,8 @@ export default defineComponent({
     const filteredUsers = computed(() => {
       return users.value.filter(user => {
         return user.name.toLowerCase().includes(search.value.toLowerCase()) ||
-               user.voting_id.toLowerCase().includes(search.value.toLowerCase()) ||
-               user.phone_number.includes(search.value)
+          user.voting_id.toLowerCase().includes(search.value.toLowerCase()) ||
+          user.phone_number.includes(search.value)
       })
     })
 
@@ -159,7 +148,26 @@ export default defineComponent({
       container.appendChild(preElement);
     }
 
+    const showLogs = async () => {
+      try {
+        const response = await fetch(`http://10.173.8.113:5001/votes`);
+        const votes = await response.json();
+        const container = document.getElementById('voteLogsContainer');
+        container.innerHTML = '';
 
+        votes.forEach(vote => {
+          const voteElement = document.createElement('div');
+          voteElement.className = 'vote-entry';
+
+          const [id, citizenId, message, timestamp] = vote;
+          voteElement.textContent = `ID: ${id} | Vote: ${message} | Time: ${timestamp}`;
+
+          container.appendChild(voteElement);
+        });
+      } catch (error) {
+        console.error('Error fetching vote logs:', error);
+      }
+    }
 
     return {
       columns,
@@ -173,16 +181,10 @@ export default defineComponent({
       maxPage,
       dialogVisible,
       showMessage,
+      showLogs,
       citizen1Url: 'http://10.173.8.113:5001',
       citizen2Url: 'http://10.173.8.113:5002',
       frontendUrl: 'http://10.173.8.113:9000',
-      items,
-      onLoad (index, done) {
-        setTimeout(() => {
-          items.value.push({}, {}, {}, {}, {}, {}, {})
-          done()
-        }, 2000)
-      }
     }
   },
   mounted() {
@@ -193,15 +195,21 @@ export default defineComponent({
 
 <style scoped>
 .dialog-wide {
-  width: 90vw; /* Increased to 90% of the viewport width */
-  height: 70vh; /* Keep the height at 70% of the viewport height */
+  width: 90vw;
+  /* Increased to 90% of the viewport width */
+  height: 70vh;
+  /* Keep the height at 70% of the viewport height */
 }
 
 .json-viewer {
-  background-color: #f5f5f5;
+  background-color: hsla(0, 10%, 49%, 0.281);
   padding: 10px;
   border-radius: 5px;
   font-family: monospace;
   white-space: pre-wrap;
+}
+
+.no-shadow{
+  background-color: hsla(0, 7%, 74%, 0.281);
 }
 </style>

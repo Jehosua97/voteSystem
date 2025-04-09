@@ -21,21 +21,25 @@
       </div>
     </q-card-section>
     <q-card-actions vertical align="center">
-      <q-btn outline class="text-capitalize">Vote for this candidate</q-btn>
+      <q-btn outline class="text-capitalize" @click="sendMessage">Vote for this candidate</q-btn>
     </q-card-actions>
   </q-card>
 </template>
 
 <script>
-import {defineComponent} from 'vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: "CardPricing",
-
-  props:['background_image','title','icon','price','text']
+  props: ['background_image', 'title', 'icon', 'voteCount', 'text'],
+  methods: {
+    sendMessage() {
+      this.$emit('vote', this.title);
+    }
+  }
 })
 </script>
 
 <style scoped>
-
+/* Add your styles here */
 </style>

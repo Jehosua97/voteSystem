@@ -58,8 +58,9 @@ export default defineComponent({
       })
       .then(response => {
         if (response.data.success) {
+          debugger
           //alert('Login successful!')
-          router.push('/dashboard2') // Redirect to Dashboard2
+          router.replace('/Pricing') // Redirect to Dashboard2
         } else {
           alert('Incorrect username or password!')
         }
