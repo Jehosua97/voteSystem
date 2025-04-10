@@ -62,7 +62,7 @@
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancel" @click="dialogVisible = false"></q-btn>
-          <q-btn color="primary" label="Confirm" @click="submitVote"></q-btn>
+          <q-btn color="primary" label="Confirm" @click="sendMessage(1, selectedParty)"></q-btn>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -122,22 +122,42 @@ export default defineComponent({
       dialogVisible.value = true;
     };
 
-    const submitVote = () => {
-      console.log(`Vote confirmed for: ${selectedParty.value}`);
-      dialogVisible.value = false;
-      // Add your message sending logic here
-    };
-
+    //const submitVote = () => {
+    //  console.log(`Vote confirmed for: ${selectedParty.value}`);
+    //  dialogVisible.value = false;
+    //  // Add your message sending logic here
+    //};
+//
     return {
       year: (new Date()).getFullYear(),
       pricing_data,
       dialogVisible,
       selectedParty,
       handleVote,
-      submitVote
+      citizen1Url: 'http://10.173.8.113:5001',
+      citizen2Url: 'http://10.173.8.113:5002',
+      frontendUrl: 'http://10.173.8.113:9000'
     }
   },
-  
+  methods: {
+    // URLs de los servicios (ajusta según tu configuración)
+        // Función para enviar mensajes
+    async sendMessage(citizenId, pricing_data) {
+      debugger
+      const message = pricing_data;
+
+      if (!message) return;
+
+      try {
+        const response = await fetch(`${citizenId === 1 ? this.citizen1Url : this.citizen2Url}/send/${message}`);
+        const data = await response.json();
+        console.log(data);
+        this.dialogVisible = false;
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
+    }
+  }  
 })
 </script>
 
