@@ -50,6 +50,7 @@ export default defineComponent({
   setup() {
     const username = ref('')
     const password = ref('')
+    let number = 0
     const router = useRouter()
     const login = () => {
       axios.post('http://localhost:3000/login', {
@@ -58,9 +59,10 @@ export default defineComponent({
       })
       .then(response => {
         if (response.data.success) {
-          debugger
           //alert('Login successful!')
-          router.replace('/Pricing') // Redirect to Dashboard2
+          number = password.value.replace("password", "")
+          console.log(number);
+          router.replace({ path: '/Pricing', query: { username: number } }); // Pass username as query parameter
         } else {
           alert('Incorrect username or password!')
         }

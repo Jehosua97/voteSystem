@@ -70,7 +70,9 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent, ref } from 'vue'
+import { defineComponent, defineAsyncComponent, ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios'; // Import Axios
 
 const pricing_data = [
   {
@@ -105,7 +107,7 @@ const pricing_data = [
     text: 'Name 1',
     image: '../../assets/Pic4.jpg'
   },
-]
+];
 
 export default defineComponent({
   name: "Pricing",
@@ -117,37 +119,73 @@ export default defineComponent({
     const dialogVisible = ref(false);
     const selectedParty = ref('');
 
+    const route = useRoute();
+    const citizenNumber = route.query.username || 'Guest';
+
     const handleVote = (party) => {
       selectedParty.value = party;
       dialogVisible.value = true;
     };
 
-    //const submitVote = () => {
-    //  console.log(`Vote confirmed for: ${selectedParty.value}`);
-    //  dialogVisible.value = false;
-    //  // Add your message sending logic here
-    //};
-//
+    const login = () => {
+      axios.post('http://localhost:3000/login', {
+        username: username.value,
+        password: password.value
+      })
+      .then(response => {
+        if (response.data.success) {
+          ;
+          //alert('Login successful!')
+          number = password.value.replace("password", "");
+          console.log(number);
+          router.replace({ path: '/Pricing', query: { username: number } }); // Pass username as query parameter
+        } else {
+          alert('Incorrect username or password!');
+        }
+      })
+      .catch(error => {
+        console.error('Error during login:', error);
+      });
+    };
+
+    const fetchUserByCitizenNumber = async () => {
+      try {
+        //const password = 'password' + citizenNumber;
+        const response = await axios.post('http://localhost:3000/getUserByCitizenNumber', {
+          citizenNumber: citizenNumber
+        });
+        
+        console.log('User data:', response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    onMounted(() => {
+      ;
+      fetchUserByCitizenNumber();
+    });
+
     return {
+      login,
+      citizenNumber,
       year: (new Date()).getFullYear(),
       pricing_data,
       dialogVisible,
       selectedParty,
       handleVote,
+      fetchUserByCitizenNumber, // Add the method to the return object
       citizen1Url: 'http://10.173.8.113:5001',
       citizen2Url: 'http://10.173.8.113:5002',
       frontendUrl: 'http://10.173.8.113:9000'
-    }
+    };
   },
   methods: {
-    // URLs de los servicios (ajusta según tu configuración)
-        // Función para enviar mensajes
     async sendMessage(citizenId, pricing_data) {
-      debugger
+      ;
+      console.log("Citizen Number", this.citizenNumber);
       const message = pricing_data;
-
       if (!message) return;
-
       try {
         const response = await fetch(`${citizenId === 1 ? this.citizen1Url : this.citizen2Url}/send/${message}`);
         const data = await response.json();
@@ -157,8 +195,11 @@ export default defineComponent({
         console.error('Error sending message:', error);
       }
     }
-  }  
-})
+
+  }
+});
+
+
 </script>
 
 <style scoped></style>

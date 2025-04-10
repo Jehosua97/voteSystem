@@ -30,6 +30,65 @@ connection.connect((err) => {
   console.log('Connected as id ' + connection.threadId);
 });
 
+// Function to query user by citizenNumber
+
+//app.getUserByCitizenNumber = (citizenNumber, callback) => {
+//    const query = 'SELECT * FROM user WHERE password = ?';
+//    const password = 'password' + citizenNumber;
+//    connection.query(query, [password], (error, results) => {
+//      if (error) {
+//        callback(error, null);
+//        return;
+//      }
+//      callback(null, results);
+//    });
+//  };
+
+  
+//app.post('/getUserByCitizenNumber', (citizenNumber, callback) => {
+//    const query = 'SELECT * FROM user WHERE password = ?';
+//    const password = 'password' + citizenNumber;
+//    connection.query(query, [password], (error, results) => {
+//      if (error) {
+//        callback(error, null);
+//        return;
+//      }
+//      callback(null, results);
+//    });
+//  });
+//
+
+app.post('/getUserByCitizenNumber', (req, res) => {
+    console.log(req.body); // Log the request body
+    const { citizenNumber } = req.body;
+    let password =  citizenNumber;
+    const query = 'SELECT * FROM user WHERE password = ?';
+    if (citizenNumber != 'Admin'){
+      password = 'password' + citizenNumber;
+    }
+    connection.query(query, [password], (error, results) => {
+      if (error) {
+        res.status(500).send('Error executing query');
+        return;
+      }
+      res.json(results);
+    });
+  });
+  
+//app.post('/getUserByCitizenNumber', (citizenNumber, res) => {
+//  const query = 'SELECT * FROM user WHERE password = ?';
+//  const password = 'password' + citizenNumber;
+//  debugger
+//  connection.query(query, [password], (error, results) => {
+//        if (error) {
+//          res.status(500).send('Error executing query');
+//          return;
+//        }
+//        res.json(results);
+//      });
+//});
+  
+
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
   const query = 'SELECT * FROM user WHERE name = ? AND password = ?';
