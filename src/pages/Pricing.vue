@@ -7,45 +7,6 @@
       <q-toolbar class="q-pa-md">
         <q-toolbar-title> Let's Vote </q-toolbar-title>
         <q-space />
-        <!----
-        <div class="q-gutter-sm row items-center no-wrap">
-          <q-btn
-            square
-            dense
-            flat
-            color="text-grey-7"
-            to="/"
-            label="Dashboard"
-            icon="dashboard"
-          >
-            <q-tooltip>Dashboard</q-tooltip>
-          </q-btn>
-          <q-btn
-            square
-            dense
-            flat
-            color="text-grey-7"
-            to="/Pricing"
-            label="Vote"
-            icon="how_to_vote"
-          >
-            <q-tooltip>Voting</q-tooltip>
-          </q-btn>
-          <q-btn
-            square
-            dense
-            flat
-            color="text-grey-7"
-            to="/Lock-2"
-            label="Results"
-            icon="bar_chart"
-          >
-            <q-tooltip>Results</q-tooltip>
-          </q-btn>
-        </div>
-      -->
-
-        <!-- ✅ Results Button -->
         <q-btn
           square
           dense
@@ -55,7 +16,6 @@
           label="Result Logs"
           to="/Lock-2"
         />
-        <!-- ✅ Logout Button -->
         <q-btn
           square
           dense
@@ -95,6 +55,7 @@
               :background_image="pricing_item.background_image"
               :text="pricing_item.text"
               :image="pricing_item.image"
+              :has-voted="hasVoted"
               @vote="handleVote"
             ></card-pricing>
           </div>
@@ -283,7 +244,6 @@ export default defineComponent({
         );
         hasVoted.value = response.data[0].voted != 0;
         isAdmin.value = response.data[0].name == "admin"; // Add this line to check if user is admin
-        debugger;
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -299,7 +259,6 @@ export default defineComponent({
         const data = await response.json();
         hasVoted.value = true;
         dialogVisible.value = false;
-        debugger;
 
         await axios.post("http://localhost:3000/updateVoteStatus", {
           citizenNumber: citizenNumber.value,

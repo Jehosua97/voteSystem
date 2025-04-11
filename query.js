@@ -76,7 +76,7 @@ app.post('/login', (req, res) => {
 
 
 app.post('/getUserByCitizenNumber', (req, res) => {
-  console.log(req.body); // Log the request body
+  //console.log(req.body); // Log the request body
   const { citizenNumber } = req.body;
   let password =  citizenNumber;
   const query = 'SELECT * FROM user WHERE password = ?';
@@ -111,7 +111,6 @@ app.post('/getUserByCitizenNumber', (req, res) => {
           received: req.body
         });
       }
-      debugger
       // Convert to password format
       const password = citizenNumber === 'Admin' 
         ? 'Admin' 
