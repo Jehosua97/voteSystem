@@ -104,19 +104,8 @@ export default defineComponent({
   background-blend-mode: multiply;
 }
 
-.bg-image::before {
-  content: "";
-  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Canada_%28Pantone%29.svg/1200px-Flag_of_Canada_%28Pantone%29.svg.png');
-  background-size: cover;
-  background-position: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0.4; /* Reduced opacity for darker effect */
-  filter: brightness(0.6) contrast(1.2); /* Darkens the flag */
-}
+ 
+
 
 .q-card {
   position: relative;
@@ -129,5 +118,23 @@ export default defineComponent({
 /* Optional: Add some Canadian red to the login button */
 .q-btn[type="submit"] {
   background-color: #D80621 !important;
+}
+
+.bg-image {
+  background-image: url('/backgrounds/bg-login.jpg'); /* make sure path and name match */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.bg-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.2); /* optional white tint */
+  backdrop-filter: blur(4px); /* subtle blur */
+  z-index: -1;
 }
 </style>

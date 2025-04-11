@@ -5,7 +5,7 @@
         {{ title }}
       </div>
     </q-card-section>
-    <q-card-section>
+    <q-card-section class="flex flex-center">
       <img :src="image" :alt="title + ' candidate'" class="candidate-image" />
     </q-card-section>
     <q-card-section class="q-pa-none">
@@ -20,7 +20,7 @@
     </q-card-section>
     <q-card-actions vertical align="center">
       <q-btn outline class="text-capitalize" @click="sendMessage"
-        >Vote for this candidate</q-btn
+        >Vote for me</q-btn
       >
     </q-card-actions>
   </q-card>
@@ -63,5 +63,9 @@ export default defineComponent({
   border-radius: 50%;
   border: 3px solid white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.q-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 </style>

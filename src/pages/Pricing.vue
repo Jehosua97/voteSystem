@@ -1,11 +1,11 @@
 <template>
   <q-layout
     view="lHh Lpr lFf"
-    style="background: linear-gradient(135deg, #5b6a82 10%, #162b4d 100%)"
+    class="bg-white"
   >
-    <q-header class="bg-transparent text-white">
+    <q-header class="bg-primary text-white shadow-2" style="min-height: 50px; padding: 0 24px;">
       <q-toolbar class="q-pa-md">
-        <q-toolbar-title> Canadian Federal Election 2025 </q-toolbar-title>
+        <q-toolbar-title> Let's Vote </q-toolbar-title>
         <q-space />
         <!----
         <div class="q-gutter-sm row items-center no-wrap">
@@ -50,7 +50,7 @@
           square
           dense
           flat
-          color="text-grey-7"
+          color="text-white"
           icon="bar_chart"
           label="Results"
           to="/Lock-2"
@@ -60,7 +60,7 @@
           square
           dense
           flat
-          color="text-grey-7"
+          color="text-white"
           icon="logout"
           label="Logout"
           @click="handleLogout"
@@ -69,14 +69,12 @@
     </q-header>
 
     <q-page-container>
-      <section
-        style="min-height: 25vh"
-        class="flex text-white flex-center layout_bg"
-      >
+      <section style="min-height: 25vh;" class="flex text-dark flex-center">
+
         <div style="position: relative">
-          <div class="text-h4 text-center">Select Your Preferred Party</div>
+          <div class="text-h4 text-center text-bold">Cast Your Vote for a Better Tomorrow</div>
           <div class="text-subtitle2 q-pt-sm text-center">
-            Review each party's logo and cast your vote below.
+            Click on the button below your preferred candidate to submit your vote.
           </div>
         </div>
       </section>
@@ -157,7 +155,7 @@ const pricing_data = [
     voteCount: "54%", // Removed dollar amount
     icon: "balance",
     background_image: "linear-gradient(to right, #D71A21 0%, #A51C30 100%)", // Liberal red
-    text: "Name 1",
+    text: "Emily Carter",
     image: "/candidate-images/Pic1.jpg",
   },
   {
@@ -165,7 +163,7 @@ const pricing_data = [
     voteCount: "54%", // Removed dollar amount
     icon: "account_balance",
     background_image: "linear-gradient(-225deg, #1A4782 0%, #0E2C5E 100%)", // Conservative blue
-    text: "Name 1",
+    text: "Michael Bennett",
     image: "/candidate-images/Pic2.jpg",
   },
   {
@@ -173,7 +171,7 @@ const pricing_data = [
     voteCount: "54%", // Removed dollar amount
     icon: "groups",
     background_image: "linear-gradient(to right, #F58220 0%, #E84A27 100%)", // NDP orange
-    text: "Name 1",
+    text: "David Singh",
     image: "/candidate-images/Pic3.jpg",
   },
   {
@@ -182,7 +180,7 @@ const pricing_data = [
     icon: "flag",
     background_image:
       "linear-gradient(87deg, rgb(0, 146, 70), rgb(53, 124, 56))", // Bloc green
-    text: "Name 1",
+    text: "Jean-Luc Tremblay",
     image: "/candidate-images/Pic4.jpg",
   },
 ];
@@ -320,4 +318,8 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.q-header {
+  padding: 12px 20px;
+}
+</style>
