@@ -7,7 +7,7 @@
       <q-toolbar class="q-pa-md">
         <q-toolbar-title> Canadian Federal Election 2025 </q-toolbar-title>
         <q-space />
-
+        <!----
         <div class="q-gutter-sm row items-center no-wrap">
           <q-btn
             square
@@ -43,6 +43,28 @@
             <q-tooltip>Results</q-tooltip>
           </q-btn>
         </div>
+      -->
+
+        <!-- ✅ Results Button -->
+        <q-btn
+          square
+          dense
+          flat
+          color="text-grey-7"
+          icon="bar_chart"
+          label="Results"
+          to="/Lock-2"
+        />
+        <!-- ✅ Logout Button -->
+        <q-btn
+          square
+          dense
+          flat
+          color="text-grey-7"
+          icon="logout"
+          label="Logout"
+          @click="handleLogout"
+        />
       </q-toolbar>
     </q-header>
 
@@ -126,6 +148,7 @@
 <script>
 import { defineComponent, defineAsyncComponent, ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import axios from "axios"; // Import Axios
 
 const pricing_data = [
@@ -186,6 +209,11 @@ export default defineComponent({
     const route = useRoute();
     const citizenNumber = ref(route.query.username || "Guest");
 
+    const router = useRouter();
+    const handleLogout = () => {
+      router.push("/"); // Or wherever your login page is
+    };
+
     const handleVote = (party) => {
       if (hasVoted.value) return;
       selectedParty.value = party;
@@ -218,6 +246,7 @@ export default defineComponent({
         const data = await response.json();
         hasVoted.value = true;
         dialogVisible.value = false;
+
 
         await axios.post("http://localhost:3000/updateVoteStatus", {
           citizenNumber: citizenNumber.value,
@@ -265,6 +294,7 @@ export default defineComponent({
       sendMessage,
       isAdmin,
       showLogs,
+      handleLogout,
     };
   },
   methods: {
