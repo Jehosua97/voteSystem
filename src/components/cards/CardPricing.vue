@@ -6,9 +6,11 @@
       </div>
     </q-card-section>
     <q-card-section>
-      <div class="text-h2 text-weight-bolder text-center">
-        <q-icon :name="icon"></q-icon>
-      </div>
+      <img 
+    :src="image" 
+    :alt="title + ' candidate'" 
+    class="candidate-image"
+  />
     </q-card-section>
     <q-card-section class="q-pa-none">
       <div class="text-h2 text-weight-bolder text-center">
@@ -31,7 +33,10 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: "CardPricing",
-  props: ['background_image', 'title', 'icon', 'voteCount', 'text'],
+  props: ['background_image', 'title', 'icon', 'voteCount', 'text', 'image'],
+  mounted() {
+    console.log("Image prop:", this.image);  // ✅ ADD THIS LINE
+  },
   methods: {
     sendMessage() {
       this.$emit('vote', this.title);
@@ -42,4 +47,13 @@ export default defineComponent({
 
 <style scoped>
 /* Add your styles here */
+.candidate-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
 </style>

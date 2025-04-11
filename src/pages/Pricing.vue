@@ -36,7 +36,7 @@
         <div class="row q-col-gutter-sm q-px-sm">
           <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12" v-for="pricing_item, pricing_index in pricing_data" :key="pricing_index">
             <card-pricing :title="pricing_item.title" :icon="pricing_item.icon" :price="pricing_item.price"
-              :background_image="pricing_item.background_image" :text="pricing_item.text" @vote="handleVote"></card-pricing>
+              :background_image="pricing_item.background_image" :text="pricing_item.text" :image="pricing_item.image" @vote="handleVote"></card-pricing>
           </div>
         </div>
       </section>
@@ -81,7 +81,7 @@ const pricing_data = [
     icon: 'balance',
     background_image: 'linear-gradient(to right, #D71A21 0%, #A51C30 100%)', // Liberal red
     text: 'Name 1',
-    image: '../assets/Pic1.jpg'
+    image: '/candidate-images/Pic1.jpg'
   },
   {
     title: 'Conservative Party',
@@ -89,7 +89,7 @@ const pricing_data = [
     icon: 'account_balance',
     background_image: 'linear-gradient(-225deg, #1A4782 0%, #0E2C5E 100%)', // Conservative blue
     text: 'Name 1',
-    image: '../../assets/Pic2.jpg'
+    image: '/candidate-images/Pic2.jpg'
   },
   {
     title: 'New Democratic Party',
@@ -97,7 +97,7 @@ const pricing_data = [
     icon: 'groups',
     background_image: 'linear-gradient(to right, #F58220 0%, #E84A27 100%)', // NDP orange
     text: 'Name 1',
-    image: '../../assets/Pic3.jpg'
+    image: '/candidate-images/Pic3.jpg'
   },
   {
     title: 'Bloc Québécois',
@@ -105,7 +105,7 @@ const pricing_data = [
     icon: 'flag',
     background_image: 'linear-gradient(87deg, rgb(0, 146, 70), rgb(53, 124, 56))', // Bloc green
     text: 'Name 1',
-    image: '../../assets/Pic4.jpg'
+    image: '/candidate-images/Pic4.jpg'
   },
 ];
 
