@@ -9,8 +9,10 @@
       <img :src="image" :alt="title + ' candidate'" class="candidate-image" />
     </q-card-section>
     <q-card-section class="q-pa-none">
-      <div class="text-h2 text-weight-bolder text-center">
+      <div v-if="showPercentage" class="text-h2 text-weight-bolder text-center">
         {{ votepercentage }}%
+      </div>
+      <div v-else class="text-h6 text-weight-light text-center q-pt-md">
       </div>
     </q-card-section>
     <q-card-section>
@@ -37,11 +39,15 @@ export default defineComponent({
     title: String,
     icon: String,
     image: String,
-    votepercentage: [String, Number], // Accepts both String and Number
+    votepercentage: [String, Number],
     text: String,
     disabled: {
       type: Boolean,
-      default: false, // Default value when not provided
+      default: false,
+    },
+    showPercentage: {
+      type: Boolean,
+      default: false, // Default to not showing percentage
     },
   },
   methods: {
@@ -55,7 +61,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Add your styles here */
 .candidate-image {
   width: 120px;
   height: 120px;

@@ -91,6 +91,7 @@
               :title="pricing_item.title"
               :icon="pricing_item.icon"
               :votepercentage="pricing_item.votepercentage"
+              :show-percentage="hasVoted"
               :background_image="pricing_item.background_image"
               :text="pricing_item.text"
               :image="pricing_item.image"
@@ -257,7 +258,7 @@ export default defineComponent({
             citizenNumber: citizenNumber.value,
           }
         );
-        hasVoted.value = response.data[0].voted === 1;
+        hasVoted.value = response.data[0].voted != 0;
         isAdmin.value = response.data[0].name == "admin"; // Add this line to check if user is admin
         debugger;
       } catch (error) {
