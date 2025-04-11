@@ -1,9 +1,9 @@
 <template>
-  <q-layout
-    view="lHh Lpr lFf"
-    class="bg-white"
-  >
-    <q-header class="bg-primary text-white shadow-2" style="min-height: 50px; padding: 0 24px;">
+  <q-layout view="lHh Lpr lFf" class="bg-white">
+    <q-header
+      class="bg-primary text-white shadow-2"
+      style="min-height: 50px; padding: 0 24px"
+    >
       <q-toolbar class="q-pa-md">
         <q-toolbar-title> Let's Vote </q-toolbar-title>
         <q-space />
@@ -52,7 +52,7 @@
           flat
           color="text-white"
           icon="bar_chart"
-          label="Results"
+          label="Result Logs"
           to="/Lock-2"
         />
         <!-- ✅ Logout Button -->
@@ -69,12 +69,14 @@
     </q-header>
 
     <q-page-container>
-      <section style="min-height: 25vh;" class="flex text-dark flex-center">
-
+      <section style="min-height: 25vh" class="flex text-dark flex-center">
         <div style="position: relative">
-          <div class="text-h4 text-center text-bold">Cast Your Vote for a Better Tomorrow</div>
+          <div class="text-h4 text-center text-bold">
+            Cast Your Vote for a Better Tomorrow
+          </div>
           <div class="text-subtitle2 q-pt-sm text-center">
-            Click on the button below your preferred candidate to submit your vote.
+            Click on the button below your preferred candidate to submit your
+            vote.
           </div>
         </div>
       </section>
@@ -106,12 +108,12 @@
     <div class="text-h6 text-grey-8">
       <q-btn
         @click="showLogs"
-        label="Vote Logs"
+        label="Result Logs"
         class="float-center text-capitalize text-indigo-8 shadow-3"
         icon="person"
       />
     </div>
-    <div id="voteLogsContainer" class="q-pa-md"></div>
+    <!--<div id="voteLogsContainer" class="q-pa-md"></div>-->
 
     <section class="flex row flex-center q-py-sm">
       <div class="text-weight-bold text-subtitle2 text-white">
@@ -138,6 +140,24 @@
             label="Confirm"
             @click="sendMessage(1, selectedParty)"
           ></q-btn>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="voteLogDialog">
+      <q-card style="width: 700px; max-width: 90vw">
+        <q-card-section>
+          <div class="text-h6">Vote Logs</div>
+        </q-card-section>
+        <q-card-section>
+          <div v-if="voteLogs.length === 0">No logs found.</div>
+          <div v-else>
+            <div v-for="(log, index) in voteLogs" :key="index">
+              ID: {{ log[0] }} | Vote: {{ log[2] }} | Time: {{ log[3] }}
+            </div>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Close" @click="voteLogDialog = false" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -208,6 +228,9 @@ export default defineComponent({
     const hasVoted = ref(false);
     const isAdmin = ref(false); // Add this line
 
+    const voteLogDialog = ref(false); // controls popup visibility
+    const voteLogs = ref([]); // stores logs to display
+
     const citizen1Url = ref("http://10.173.8.113:5001");
     const citizen2Url = ref("http://10.173.8.113:5002");
 
@@ -217,6 +240,8 @@ export default defineComponent({
     const router = useRouter();
     const handleLogout = () => {
       router.push("/"); // Or wherever your login page is
+
+      
     };
 
     const handleVote = (party) => {
@@ -289,21 +314,9 @@ export default defineComponent({
 
     const showLogs = async () => {
       try {
-        debugger;
         const response = await fetch(`http://10.173.8.113:5001/votes`);
-        const votes = await response.json();
-        const container = document.getElementById("voteLogsContainer");
-        container.innerHTML = "";
-        debugger;
-        votes.forEach((vote) => {
-          const voteElement = document.createElement("div");
-          voteElement.className = "vote-entry";
-
-          const [id, citizenId, message, timestamp] = vote;
-          voteElement.textContent = `ID: ${id} | Vote: ${message} | Time: ${timestamp}`;
-
-          container.appendChild(voteElement);
-        });
+        voteLogs.value = await response.json();
+        voteLogDialog.value = true; // this opens the popup!
       } catch (error) {
         console.error("Error fetching vote logs:", error);
       }
@@ -329,6 +342,8 @@ export default defineComponent({
       handleVote,
       hasVoted,
       sendMessage,
+      voteLogDialog,
+      voteLogs,
       isAdmin,
       showLogs,
       pricing_data,
@@ -361,5 +376,10 @@ export default defineComponent({
 <style scoped>
 .q-header {
   padding: 12px 20px;
+}
+
+.q-dialog .q-card {
+  max-height: 80vh;
+  overflow-y: auto;
 }
 </style>
