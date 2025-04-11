@@ -33,13 +33,25 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: "CardPricing",
-  props: ['background_image', 'title', 'icon', 'voteCount', 'text', 'image'],
-  mounted() {
-    console.log("Image prop:", this.image);  // ✅ ADD THIS LINE
+
+  props: {
+    background_image: String,
+    title: String,
+    icon: String,
+    image: String,
+    voteCount: [String, Number], // Accepts both String and Number
+    text: String,
+    disabled: {
+      type: Boolean,
+      default: false // Default value when not provided
+    }
+
   },
   methods: {
     sendMessage() {
-      this.$emit('vote', this.title);
+      if (!this.disabled) {
+        this.$emit('vote', this.title);
+      }
     }
   }
 })

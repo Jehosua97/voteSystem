@@ -30,34 +30,6 @@ connection.connect((err) => {
   console.log('Connected as id ' + connection.threadId);
 });
 
-// Function to query user by citizenNumber
-
-//app.getUserByCitizenNumber = (citizenNumber, callback) => {
-//    const query = 'SELECT * FROM user WHERE password = ?';
-//    const password = 'password' + citizenNumber;
-//    connection.query(query, [password], (error, results) => {
-//      if (error) {
-//        callback(error, null);
-//        return;
-//      }
-//      callback(null, results);
-//    });
-//  };
-
-  
-//app.post('/getUserByCitizenNumber', (citizenNumber, callback) => {
-//    const query = 'SELECT * FROM user WHERE password = ?';
-//    const password = 'password' + citizenNumber;
-//    connection.query(query, [password], (error, results) => {
-//      if (error) {
-//        callback(error, null);
-//        return;
-//      }
-//      callback(null, results);
-//    });
-//  });
-//
-
 app.post('/getUserByCitizenNumber', (req, res) => {
     console.log(req.body); // Log the request body
     const { citizenNumber } = req.body;
@@ -74,20 +46,57 @@ app.post('/getUserByCitizenNumber', (req, res) => {
       res.json(results);
     });
   });
+
+  app.post('/updateVoteStatus', async (req, res) => {
+    try {
+      // Debugging: log the raw body
+      console.log('Raw body:', req.body);
+      
+      // Check if body exists
+      if (!req.body) {
+        return res.status(400).json({ error: 'Request body is missing' });
+      }
   
-//app.post('/getUserByCitizenNumber', (citizenNumber, res) => {
-//  const query = 'SELECT * FROM user WHERE password = ?';
-//  const password = 'password' + citizenNumber;
-//  debugger
-//  connection.query(query, [password], (error, results) => {
-//        if (error) {
-//          res.status(500).send('Error executing query');
-//          return;
-//        }
-//        res.json(results);
-//      });
-//});
+      const { citizenNumber, voted } = req.body;
   
+      // Validate inputs
+      if (citizenNumber === undefined || voted === undefined) {
+        return res.status(400).json({ 
+          error: 'Both citizenNumber and voted are required',
+          received: req.body
+        });
+      }
+  
+      // Convert to password format
+      const password = citizenNumber === 'Admin' 
+        ? 'Admin' 
+        : `password${citizenNumber}`;
+  
+      // SQL query
+      const query = 'UPDATE user SET voted = ? WHERE password = ?';
+      
+      // Execute with promise wrapper
+      const [results] = await connection.promise().query(query, [voted, password]);
+  
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      res.json({ 
+        success: true,
+        message: 'Vote status updated',
+        citizenNumber,
+        newStatus: voted
+      });
+  
+    } catch (error) {
+      console.error('Database error:', error);
+      res.status(500).json({ 
+        error: 'Server error',
+        details: error.message 
+      });
+    }
+  });
 
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
