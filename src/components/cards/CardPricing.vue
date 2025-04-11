@@ -10,7 +10,7 @@
     </q-card-section>
     <q-card-section class="q-pa-none">
       <div class="text-h2 text-weight-bolder text-center">
-        {{ voteCount }}
+        {{ votepercentage }}%
       </div>
     </q-card-section>
     <q-card-section>
@@ -37,7 +37,7 @@ export default defineComponent({
     title: String,
     icon: String,
     image: String,
-    voteCount: [String, Number], // Accepts both String and Number
+    votepercentage: [String, Number], // Accepts both String and Number
     text: String,
     disabled: {
       type: Boolean,

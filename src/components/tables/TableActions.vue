@@ -75,16 +75,6 @@
     </q-card>
   </q-dialog>
   <q-space class="q-my-md"></q-space>
-  <!-- Adds vertical spacing -->
-  <div class="text-h6 text-grey-8">
-    <q-btn
-      @click="showLogs"
-      label="Vote Logs"
-      class="float-center text-capitalize text-indigo-8 shadow-3"
-      icon="person"
-    />
-  </div>
-  <div id="voteLogsContainer" class="q-pa-md"></div>
 </template>
 
 <script>

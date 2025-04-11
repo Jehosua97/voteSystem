@@ -90,7 +90,7 @@
             <card-pricing
               :title="pricing_item.title"
               :icon="pricing_item.icon"
-              :voteCount="pricing_item.voteCount"
+              :votepercentage="pricing_item.votepercentage"
               :background_image="pricing_item.background_image"
               :text="pricing_item.text"
               :image="pricing_item.image"
@@ -112,7 +112,7 @@
         icon="person"
       />
     </div>
-      <div id="voteLogsContainer" class="q-pa-md"></div>
+    <div id="voteLogsContainer" class="q-pa-md"></div>
 
     <section class="flex row flex-center q-py-sm">
       <div class="text-weight-bold text-subtitle2 text-white">
@@ -146,15 +146,21 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent, ref, onMounted } from "vue";
+import {
+  defineComponent,
+  defineAsyncComponent,
+  ref,
+  onMounted,
+  onUnmounted,
+} from "vue";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
 import axios from "axios"; // Import Axios
 
-const pricing_data = [
+const pricing_data = ref([
   {
     title: "Liberal Party",
-    voteCount: "54%", // Removed dollar amount
+    votepercentage: 0, // Removed dollar amount
     icon: "balance",
     background_image: "linear-gradient(to right, #D71A21 0%, #A51C30 100%)", // Liberal red
     text: "Name 1",
@@ -162,7 +168,7 @@ const pricing_data = [
   },
   {
     title: "Conservative Party",
-    voteCount: "54%", // Removed dollar amount
+    votepercentage: 0, // Removed dollar amount
     icon: "account_balance",
     background_image: "linear-gradient(-225deg, #1A4782 0%, #0E2C5E 100%)", // Conservative blue
     text: "Name 1",
@@ -170,7 +176,7 @@ const pricing_data = [
   },
   {
     title: "New Democratic Party",
-    voteCount: "54%", // Removed dollar amount
+    votepercentage: 0, // Removed dollar amount
     icon: "groups",
     background_image: "linear-gradient(to right, #F58220 0%, #E84A27 100%)", // NDP orange
     text: "Name 1",
@@ -178,14 +184,14 @@ const pricing_data = [
   },
   {
     title: "Bloc Québécois",
-    voteCount: "54%", // Removed dollar amount
+    votepercentage: 0, // Removed dollar amount
     icon: "flag",
     background_image:
       "linear-gradient(87deg, rgb(0, 146, 70), rgb(53, 124, 56))", // Bloc green
     text: "Name 1",
     image: "/candidate-images/Pic4.jpg",
   },
-];
+]);
 
 export default defineComponent({
   name: "Pricing",
@@ -220,6 +226,29 @@ export default defineComponent({
       dialogVisible.value = true;
     };
 
+    const fetchVoteStatistics = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/voteStatistics"
+        );
+        const apiData = response.data.parties;
+
+        const voteMap = {};
+        apiData.forEach((party) => {
+          voteMap[party.party] = party.percentage;
+        });
+
+        pricing_data.value = pricing_data.value.map((party) => ({
+          ...party,
+          votepercentage: voteMap[party.title] || 0,
+        }));
+      } catch (error) {
+        console.error("Error fetching vote statistics:", error);
+      }
+    };
+
+    const pollingInterval = ref(null);
+
     const fetchUserByCitizenNumber = async () => {
       try {
         const response = await axios.post(
@@ -246,12 +275,14 @@ export default defineComponent({
         const data = await response.json();
         hasVoted.value = true;
         dialogVisible.value = false;
-
+        debugger;
 
         await axios.post("http://localhost:3000/updateVoteStatus", {
           citizenNumber: citizenNumber.value,
           voted: 1,
+          party: party,
         });
+        fetchVoteStatistics();
       } catch (error) {
         console.error("Error:", error);
       }
@@ -281,12 +312,19 @@ export default defineComponent({
 
     onMounted(() => {
       fetchUserByCitizenNumber();
+      fetchVoteStatistics();
+      pollingInterval.value = setInterval(fetchVoteStatistics, 5000);
+    });
+
+    onUnmounted(() => {
+      if (pollingInterval.value) {
+        clearInterval(pollingInterval.value);
+      }
     });
 
     return {
       citizenNumber,
       year: new Date().getFullYear(),
-      pricing_data,
       dialogVisible,
       selectedParty,
       handleVote,
@@ -294,6 +332,7 @@ export default defineComponent({
       sendMessage,
       isAdmin,
       showLogs,
+      pricing_data,
       handleLogout,
     };
   },

@@ -31,7 +31,7 @@ connection.connect((err) => {
 });
 
 app.post('/getUserByCitizenNumber', (req, res) => {
-    console.log(req.body); // Log the request body
+    //console.log(req.body); // Log the request body
     const { citizenNumber } = req.body;
     let password =  citizenNumber;
     const query = 'SELECT * FROM user WHERE password = ?';
@@ -50,14 +50,14 @@ app.post('/getUserByCitizenNumber', (req, res) => {
   app.post('/updateVoteStatus', async (req, res) => {
     try {
       // Debugging: log the raw body
-      console.log('Raw body:', req.body);
+      //console.log('Raw body:', req.body);
       
       // Check if body exists
       if (!req.body) {
         return res.status(400).json({ error: 'Request body is missing' });
       }
   
-      const { citizenNumber, voted } = req.body;
+      const { citizenNumber, voted, party } = req.body;
   
       // Validate inputs
       if (citizenNumber === undefined || voted === undefined) {
@@ -66,17 +66,17 @@ app.post('/getUserByCitizenNumber', (req, res) => {
           received: req.body
         });
       }
-  
+      debugger
       // Convert to password format
       const password = citizenNumber === 'Admin' 
         ? 'Admin' 
         : `password${citizenNumber}`;
   
       // SQL query
-      const query = 'UPDATE user SET voted = ? WHERE password = ?';
+      const query = 'UPDATE user SET voted = ?, party = ? WHERE password = ?';
       
       // Execute with promise wrapper
-      const [results] = await connection.promise().query(query, [voted, password]);
+      const [results] = await connection.promise().query(query, [voted, party, password]);
   
       if (results.affectedRows === 0) {
         return res.status(404).json({ error: 'User not found' });
@@ -98,6 +98,7 @@ app.post('/getUserByCitizenNumber', (req, res) => {
     }
   });
 
+  
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
   const query = 'SELECT * FROM user WHERE name = ? AND password = ?';
@@ -113,6 +114,62 @@ app.post('/login', (req, res) => {
       res.json({ success: false });
     }
   });
+});
+
+  // Add this new endpoint to your existing code
+app.get('/voteStatistics', async (req, res) => {
+  try {
+    // Query to get total number of voters (who have voted)
+    const totalVotersQuery = 'SELECT COUNT(*) as totalVoters FROM user WHERE voted = 1';
+    
+    // Query to get vote count per party
+    const partyStatsQuery = `
+      SELECT 
+        party, 
+        COUNT(*) as voteCount,
+        ROUND((COUNT(*) / (SELECT COUNT(*) FROM user WHERE voted = 1)) * 100, 2) as percentage
+      FROM user 
+      WHERE voted = 1 AND party IS NOT NULL
+      GROUP BY party
+      ORDER BY voteCount DESC
+    `;
+
+    // Execute both queries in parallel
+    const [totalResults, partyResults] = await Promise.all([
+      connection.promise().query(totalVotersQuery),
+      connection.promise().query(partyStatsQuery)
+    ]);
+
+    const totalVoters = totalResults[0][0].totalVoters;
+    const partyStats = partyResults[0];
+
+    // Ensure all percentages are numbers
+    const processedStats = partyStats.map(p => ({
+      ...p,
+      percentage: Number(p.percentage) || 0  // Convert to number, default to 0 if null/undefined
+    }));
+
+    res.json({
+      success: true,
+      totalVoters,
+      parties: processedStats,
+      statistics: {
+        labels: processedStats.map(p => p.party),
+        datasets: [{
+          data: processedStats.map(p => p.voteCount),
+          percentages: processedStats.map(p => p.percentage.toFixed(2))
+        }]
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching vote statistics:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to fetch vote statistics',
+      details: error.message 
+    });
+  }
 });
 
 app.get('/users', (req, res) => {
