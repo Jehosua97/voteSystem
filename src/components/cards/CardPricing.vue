@@ -21,9 +21,14 @@
       </div>
     </q-card-section>
     <q-card-actions vertical align="center">
-      <q-btn outline class="text-capitalize" @click="sendMessage"
-        >Vote for me</q-btn
+      <q-btn 
+        outline 
+        class="text-capitalize" 
+        @click="sendMessage"
+        :disabled="disabled || hasVoted"
       >
+        {{ hasVoted ? 'Already Voted' : 'Vote for me' }}
+      </q-btn>
     </q-card-actions>
   </q-card>
 </template>
@@ -47,12 +52,17 @@ export default defineComponent({
     },
     showPercentage: {
       type: Boolean,
-      default: false, // Default to not showing percentage
+      default: false,
     },
+    hasVoted: {
+      type: Boolean,
+      default: false,
+    }
   },
+
   methods: {
     sendMessage() {
-      if (!this.disabled) {
+      if (!this.disabled && !this.hasVoted) {
         this.$emit("vote", this.title);
       }
     },
