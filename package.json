@@ -1,9 +1,9 @@
 {
-  "name": "Quasar Admin",
+  "name": "Lets Vote",
   "version": "0.0.1",
-  "description": "Quasar Admin",
-  "productName": "Quasar Admin",
-  "author": "pratikpatelpp802@gmail.com",
+  "description": "Lets Vote",
+  "productName": "Lets Vote",
+  "author": "Team 5",
   "private": true,
   "scripts": {
     "dev": "concurrently \"npx quasar dev\" \"node query.js\""

@@ -5,6 +5,7 @@ CREATE TABLE user (
   voting_id VARCHAR(20),
   password VARCHAR(255),
   voted TINYINT(1) DEFAULT 0,
+  party VARCHAR(50),
   PRIMARY KEY (serial_number)
 );
 

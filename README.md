@@ -1,15 +1,15 @@
 **Quasar Prime Admin Template** (Join 62+ satisfied clients who have already unlocked the full potential of their dashboards): [https://quasar-prime-admin-template.netlify.app/analytics](https://quasar-prime-admin-template.netlify.app/analytics). Quasar Prime: Vue.js Admin Template – Powerfully Elegant, Ultimate Dashboard Solution! 🚀 Unlock the full potential of the code by sponsoring for (~~$549~~)$249 one time(Launching price), a one-time payment that grants you exclusive access to the template.
 
-Quasar Admin Premium Demo: [https://quasar-admin-premium.netlify.app/](https://quasar-admin-premium.netlify.app/). Looking for beautiful premium Quasar admin template for Vue 3? To gain access to the code, you'll need to sponsor me for $69 per month (one-time payment). Please visit my sponsorship page([sponsor me](https://github.com/sponsors/pratik227)). Good News 🎉🎉 I want to let you know that I recently made some updates to my Quasar Admin Premium template, and it's now also available for Typescript with Composition API and <script setup>. 
+Lets Vote Premium Demo: [https://quasar-admin-premium.netlify.app/](https://quasar-admin-premium.netlify.app/). Looking for beautiful premium Lets Vote template for Vue 3? To gain access to the code, you'll need to sponsor me for $69 per month (one-time payment). Please visit my sponsorship page([sponsor me](https://github.com/sponsors/pratik227)). Good News 🎉🎉 I want to let you know that I recently made some updates to my Lets Vote Premium template, and it's now also available for Typescript with Composition API and <script setup>. 
 
 Looking for minimalist Quasar template? I have the perfect solution for you. Simply sponsor me $49 a month for once [Sponsor](https://github.com/sponsors/pratik227) and you will gain access to the repo. Check out the website at https://quasar-minimalist-design.netlify.app/.
 
 
-# Quasar Admin Template
+# Lets Vote Template
 
 [![MadeWithVueJs.com shield](https://madewithvuejs.com/storage/repo-shields/2604-shield.svg)](https://madewithvuejs.com/p/quasar-admin/shield-link)
 
-Free Quasar Admin Template based on Vue.js and used Quasar Framework.
+Free Lets Vote Template based on Vue.js and used Quasar Framework.
 
 ## Site: [https://next-quasar-admin.netlify.app/](https://next-quasar-admin.netlify.app/)
 
