@@ -53,7 +53,7 @@ export default defineComponent({
     let number = 0
     const router = useRouter()
     const login = () => {
-      axios.post('http://localhost:3000/login', {
+      axios.post('http://10.173.8.114:3000/login', {
         username: username.value,
         password: password.value
       })
@@ -83,7 +83,7 @@ export default defineComponent({
     };
   },
   mounted() {
-    fetch('http://localhost:3000/user')
+    fetch('http://10.173.8.114:3000/user')
       .then(response => response.json())
       .then(data => {
         this.user = data;

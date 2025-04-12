@@ -214,7 +214,7 @@ export default defineComponent({
     const fetchVoteStatistics = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/voteStatistics"
+          "http://10.173.8.114:3000/voteStatistics"
         );
         const apiData = response.data.parties;
 
@@ -237,7 +237,7 @@ export default defineComponent({
     const fetchUserByCitizenNumber = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:3000/getUserByCitizenNumber",
+          "http://10.173.8.114:3000/getUserByCitizenNumber",
           {
             citizenNumber: citizenNumber.value,
           }
@@ -260,7 +260,7 @@ export default defineComponent({
         hasVoted.value = true;
         dialogVisible.value = false;
 
-        await axios.post("http://localhost:3000/updateVoteStatus", {
+        await axios.post("http://10.173.8.114:3000/updateVoteStatus", {
           citizenNumber: citizenNumber.value,
           voted: 1,
           party: party,
