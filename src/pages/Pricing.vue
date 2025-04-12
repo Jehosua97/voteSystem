@@ -14,7 +14,7 @@
           color="text-white"
           icon="bar_chart"
           label="Result Logs"
-          to="/Lock-2"
+          @click="showLogs"
         />
         <q-btn
           square
@@ -67,12 +67,7 @@
     </section>
 
     <div class="text-h6 text-grey-8">
-      <q-btn
-        @click="showLogs"
-        label="Result Logs"
-        class="float-center text-capitalize text-indigo-8 shadow-3"
-        icon="person"
-      />
+      
     </div>
     <!--<div id="voteLogsContainer" class="q-pa-md"></div>-->
 
