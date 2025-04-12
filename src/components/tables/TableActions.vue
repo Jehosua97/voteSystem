@@ -124,7 +124,7 @@ export default defineComponent({
 
     const fetchUsers = () => {
       axios
-        .get("http://localhost:3000/users")
+        .get("http://10.173.8.114:3000/users")
         .then((response) => {
           users.value = response.data;
           console.log(users.value);
