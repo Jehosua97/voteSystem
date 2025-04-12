@@ -9,6 +9,7 @@ const port = process.env.PORT || 3000;
 // CORS Configuration
 const allowedOrigins = [
   'http://localhost:9000',
+  'http://10.173.8.114:9000',
   /^http:\/\/10\.144\.\d{1,3}\.\d{1,3}(:\d+)?$/,
   /^http:\/\/10\.173\.\d{1,3}\.\d{1,3}(:\d+)?$/
 ];
