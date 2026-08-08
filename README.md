@@ -1,14 +1,14 @@
-# Let's Vote — Operator Dashboard & Voter API
+# Let's Vote: Operator Dashboard & Voter API
 
 🏆 **Part of the project awarded Best Project of the Year, Conestoga College 2025** (Postgraduate Diploma in Virtualization and Cloud Computing). 📣 [See the announcement](https://lnkd.in/p/gp7SSvcA)
 
-The operator-facing side of the [Let's Vote](https://github.com/Jehosua97/dockersVoteSystem) decentralized voting platform: a Vue/Quasar dashboard plus an Express API in front of MySQL, deployed as the `Web Server` tier (`10.173.8.114`) talking to a dedicated `govDbServer` (`10.173.8.115`) in the full architecture. The vote log itself is replicated separately across Kafka-connected nodes — see [dockersVoteSystem](https://github.com/Jehosua97/dockersVoteSystem) for that piece and the full system diagram.
+The operator-facing side of the [Let's Vote](https://github.com/Jehosua97/dockersVoteSystem) decentralized voting platform: a Vue/Quasar dashboard plus an Express API in front of MySQL, deployed as the `Web Server` tier (`10.173.8.114`) talking to a dedicated `govDbServer` (`10.173.8.115`) in the full architecture. The vote log itself is replicated separately across Kafka-connected nodes; see [dockersVoteSystem](https://github.com/Jehosua97/dockersVoteSystem) for that piece and the full system diagram.
 
 ## What this repo contains
 
-- **`query.js`** — Express API backed by MySQL: voter login, look-up by citizen number, recording a vote (`voted`, `party`), and a live `/voteStatistics` endpoint that aggregates results per party.
-- **Vue 3 / Quasar frontend** (`src/`) — login flow, admin view of incoming votes, and a live results dashboard, built on top of the [Quasar Prime Admin](https://github.com/pratik227/quasar-admin) template.
-- **`Citizen PWD.sql`** — table schema plus synthetic seed data for demo/local runs (real deployment data lived in the actual `govDbServer`, not in this repo).
+- **`query.js`**: Express API backed by MySQL: voter login, look-up by citizen number, recording a vote (`voted`, `party`), and a live `/voteStatistics` endpoint that aggregates results per party.
+- **Vue 3 / Quasar frontend** (`src/`): login flow, admin view of incoming votes, and a live results dashboard, built on top of the [Quasar Prime Admin](https://github.com/pratik227/quasar-admin) template.
+- **`Citizen PWD.sql`**: table schema plus synthetic seed data for demo/local runs (real deployment data lived in the actual `govDbServer`, not in this repo).
 
 ## Team
 
