@@ -1,6 +1,6 @@
 # Let's Vote — Operator Dashboard & Voter API
 
-🏆 **Part of the project awarded Best Project of the Year, Conestoga College 2025** (Postgraduate Diploma in Virtualization and Cloud Computing).
+🏆 **Part of the project awarded Best Project of the Year, Conestoga College 2025** (Postgraduate Diploma in Virtualization and Cloud Computing). 📣 [See the announcement](https://lnkd.in/p/gp7SSvcA)
 
 The operator-facing side of the [Let's Vote](https://github.com/Jehosua97/dockersVoteSystem) decentralized voting platform: a Vue/Quasar dashboard plus an Express API in front of MySQL, deployed as the `Web Server` tier (`10.173.8.114`) talking to a dedicated `govDbServer` (`10.173.8.115`) in the full architecture. The vote log itself is replicated separately across Kafka-connected nodes — see [dockersVoteSystem](https://github.com/Jehosua97/dockersVoteSystem) for that piece and the full system diagram.
 
