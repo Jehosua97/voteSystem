@@ -17,14 +17,14 @@ const allowedOrigins = [
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    
+
     const isAllowed = allowedOrigins.some(pattern => {
       if (typeof pattern === 'string') {
         return origin === pattern;
       }
       return pattern.test(origin);
     });
-    
+
     callback(null, isAllowed);
   },
   credentials: true
@@ -36,11 +36,11 @@ app.use(express.json());
 
 // Database Connection (using createConnection)
 const connection = mysql.createConnection({
-  host: '10.173.8.115',
-  port: 3306,
-  user: 'Admin',
-  password: 'Secret@55',
-  database: 'user_details'
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
 
 
@@ -54,7 +54,7 @@ connection.connect(err => {
 
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
-  
+
   if (!username || !password) {
     return res.status(400).json({ success: false, message: 'Username and password required' });
   }
@@ -67,7 +67,7 @@ app.post('/login', (req, res) => {
         console.error('Login error:', error);
         return res.status(500).json({ success: false, message: 'Database error' });
       }
-      res.json({ 
+      res.json({
         success: results.length > 0,
         user: results[0] || null
       });
@@ -77,7 +77,6 @@ app.post('/login', (req, res) => {
 
 
 app.post('/getUserByCitizenNumber', (req, res) => {
-  //console.log(req.body); // Log the request body
   const { citizenNumber } = req.body;
   let password =  citizenNumber;
   const query = 'SELECT * FROM user WHERE password = ?';
@@ -93,99 +92,63 @@ app.post('/getUserByCitizenNumber', (req, res) => {
   });
 });
 
-  app.post('/updateVoteStatus', async (req, res) => {
-    try {
-      // Debugging: log the raw body
-      //console.log('Raw body:', req.body);
-      
-      // Check if body exists
-      if (!req.body) {
-        return res.status(400).json({ error: 'Request body is missing' });
-      }
-  
-      const { citizenNumber, voted, party } = req.body;
-  
-      // Validate inputs
-      if (citizenNumber === undefined || voted === undefined) {
-        return res.status(400).json({ 
-          error: 'Both citizenNumber and voted are required',
-          received: req.body
-        });
-      }
-      // Convert to password format
-      const password = citizenNumber === 'Admin' 
-        ? 'Admin' 
-        : `password${citizenNumber}`;
-  
-      // SQL query
-      const query = 'UPDATE user SET voted = ?, party = ? WHERE password = ?';
-      
-      // Execute with promise wrapper
-      const [results] = await connection.promise().query(query, [voted, party, password]);
-  
-      if (results.affectedRows === 0) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-  
-      res.json({ 
-        success: true,
-        message: 'Vote status updated',
-        citizenNumber,
-        newStatus: voted
-      });
-  
-    } catch (error) {
-      console.error('Database error:', error);
-      res.status(500).json({ 
-        error: 'Server error',
-        details: error.message 
-      });
-    }
-  });
-
-  
-app.post('/login', async (req, res) => {
+app.post('/updateVoteStatus', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    
-    if (!username || !password) {
-      return res.status(400).json({ success: false, message: 'Username and password required' });
+    if (!req.body) {
+      return res.status(400).json({ error: 'Request body is missing' });
     }
 
-    const [rows] = await pool.query(
-      'SELECT * FROM user WHERE name = ? AND password = ?',
-      [username, password]
-    );
+    const { citizenNumber, voted, party } = req.body;
 
-    res.json({ 
-      success: rows.length > 0,
-      user: rows[0] || null
+    if (citizenNumber === undefined || voted === undefined) {
+      return res.status(400).json({
+        error: 'Both citizenNumber and voted are required',
+        received: req.body
+      });
+    }
+
+    const password = citizenNumber === 'Admin'
+      ? 'Admin'
+      : `password${citizenNumber}`;
+
+    const query = 'UPDATE user SET voted = ?, party = ? WHERE password = ?';
+    const [results] = await connection.promise().query(query, [voted, party, password]);
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Vote status updated',
+      citizenNumber,
+      newStatus: voted
     });
+
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    console.error('Database error:', error);
+    res.status(500).json({
+      error: 'Server error',
+      details: error.message
+    });
   }
 });
 
-  // Add this new endpoint to your existing code
 app.get('/voteStatistics', async (req, res) => {
   try {
-    // Query to get total number of voters (who have voted)
     const totalVotersQuery = 'SELECT COUNT(*) as totalVoters FROM user WHERE voted = 1';
-    
-    // Query to get vote count per party
+
     const partyStatsQuery = `
-      SELECT 
-        party, 
+      SELECT
+        party,
         COUNT(*) as voteCount,
         ROUND((COUNT(*) / (SELECT COUNT(*) FROM user WHERE voted = 1)) * 100, 2) as percentage
-      FROM user 
+      FROM user
       WHERE voted = 1 AND party IS NOT NULL
       GROUP BY party
       ORDER BY voteCount DESC
     `;
 
-    // Execute both queries in parallel
     const [totalResults, partyResults] = await Promise.all([
       connection.promise().query(totalVotersQuery),
       connection.promise().query(partyStatsQuery)
@@ -194,10 +157,9 @@ app.get('/voteStatistics', async (req, res) => {
     const totalVoters = totalResults[0][0].totalVoters;
     const partyStats = partyResults[0];
 
-    // Ensure all percentages are numbers
     const processedStats = partyStats.map(p => ({
       ...p,
-      percentage: Number(p.percentage) || 0  // Convert to number, default to 0 if null/undefined
+      percentage: Number(p.percentage) || 0
     }));
 
     res.json({
@@ -215,10 +177,10 @@ app.get('/voteStatistics', async (req, res) => {
 
   } catch (error) {
     console.error('Error fetching vote statistics:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
       error: 'Failed to fetch vote statistics',
-      details: error.message 
+      details: error.message
     });
   }
 });
